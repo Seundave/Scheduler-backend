@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
+import schedulerRouter from "./routes/scheduler.route.js";
 dotenv.config();
 
 const PORT = 3000 || process.env.PORT;
@@ -22,8 +23,9 @@ app.use(express.json());
 
 app.use(cookieParser());
 
-app.use("/user", userRouter);
+app.use("/admin", userRouter);
 app.use("/auth", authRouter);
+app.use("/scheduler", schedulerRouter);
 
 // Middleware to handle errors
 app.use((err, req, res, next) => {
