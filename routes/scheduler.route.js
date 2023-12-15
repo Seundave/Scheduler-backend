@@ -7,6 +7,6 @@ router.post('/create-scheduler', createscheduler)
 router.get('/get-schedulers', getallscheduler)
 router.delete('/delete-scheduler/:id', deletescheduler)
 router.get('/get-scheduler/:id', getscheduler)
-router.put('/update-scheduler/:id', updatescheduler)
+router.patch('/update-scheduler/:id', updatescheduler)
 
 export default router;

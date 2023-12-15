@@ -8,6 +8,6 @@ router.post('/sign-in', signinadmin)
 router.get('/all-admins', getalladmins)
 router.get('/get-admin/:id', getadmin)
 router.delete('/delete-admin/:id', deleteadmin)
-router.put('/update-admin/:id', updateadmin)
+router.patch('/update-admin/:id', updateadmin)
 
 export default router;

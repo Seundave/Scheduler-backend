@@ -62,7 +62,7 @@ export const updatescheduler = async (req, res, next) => {
   console.log(schedulerId);
   try {
     const updatedScheduler = await Scheduler.findOneAndUpdate(
-      schedulerId,
+      {_id:schedulerId},
       {
         $set: {
           lectureTheatre: req.body.lectureTheatre,
