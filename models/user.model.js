@@ -5,12 +5,12 @@ const AdminSchema = mongoose.Schema(
     name: {
       type: String,
       required: true,
-      unique: true,
+      // unique: true,
     },
     faculty: {
       type: String,
       required: true,
-      unique:true,
+      // unique:true,
     },
     department: {
       type: String,
@@ -19,7 +19,7 @@ const AdminSchema = mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique:true
+      // unique:true
     },
     password: {
       type: String,
@@ -28,7 +28,7 @@ const AdminSchema = mongoose.Schema(
     resource: {
       type: String,
       required: true,
-      unique:true
+      // unique:true
     },
   },
   { timestamps: true }

@@ -19,7 +19,7 @@ export const createadmin = async (req, res, next) => {
 
   try {
     await newAdmin.save();
-    res.status(201).json({ message: "Admin created successfully" }); // Return a JSON object for consistency
+    res.status(201).json(newAdmin); // Return a JSON object for consistency
   } catch (error) {
     next(error);
   }

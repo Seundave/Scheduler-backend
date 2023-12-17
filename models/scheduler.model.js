@@ -5,7 +5,7 @@ const schedulerSchema = mongoose.Schema(
     lectureTheatre: {
       type: String,
       required: true,
-      unique: true,
+      // unique: true,
     },
     location: {
       type: String,
@@ -14,6 +14,10 @@ const schedulerSchema = mongoose.Schema(
     capacity: {
       type: String,
       required: true,
+    },
+    facilities: {
+      type: Array,
+      required: [true, "facilities field is required"],
     },
     description: {
       type: String,

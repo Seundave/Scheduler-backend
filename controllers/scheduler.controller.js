@@ -2,17 +2,18 @@ import Scheduler from "../models/scheduler.model.js";
 
 //create a scheduler
 export const createscheduler = async (req, res, next) => {
-  const { lectureTheatre, location, capacity, description } = req.body;
+  const { lectureTheatre, location, capacity, facilities, description } = req.body;
   const newScheduler = new Scheduler({
     lectureTheatre,
     location,
     capacity,
+    facilities,
     description,
   });
 
   try {
     await newScheduler.save();
-    res.status(201).json({ message: "Scheduler created successfully" });
+    res.status(201).json(newScheduler);
   } catch (error) {
     next(error);
   }
