@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const schedulerSchema = mongoose.Schema(
   {
+    imageUrl: {
+      type: String,
+      required: true,
+    },
     lectureTheatre: {
       type: String,
       required: true,

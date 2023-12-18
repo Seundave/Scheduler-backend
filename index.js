@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
 import schedulerRouter from "./routes/scheduler.route.js";
+import { errorHandler } from "./utils/error.js";
 dotenv.config();
 
 const PORT = 3000 || process.env.PORT;
@@ -47,6 +48,8 @@ app.use((err, req, res, next) => {
     message,
   });
 });
+
+app.use(errorHandler)
 
 app.listen(3000, () => {
   console.log(`Server is running on port ${PORT}`);
