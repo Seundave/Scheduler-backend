@@ -2,12 +2,22 @@ import Scheduler from "../models/scheduler.model.js";
 
 //create a scheduler
 export const createscheduler = async (req, res, next) => {
-  const { lectureTheatre, location, capacity, facilities, description } = req.body;
-  const newScheduler = new Scheduler({
+  const {
+    imageUrl,
+    status,
     lectureTheatre,
     location,
     capacity,
     facilities,
+    description,
+  } = req.body;
+  const newScheduler = new Scheduler({
+    imageUrl,
+    lectureTheatre,
+    location,
+    capacity,
+    facilities,
+    status,
     description,
   });
 
@@ -63,12 +73,14 @@ export const updatescheduler = async (req, res, next) => {
   console.log(schedulerId);
   try {
     const updatedScheduler = await Scheduler.findOneAndUpdate(
-      {_id:schedulerId},
+      { _id: schedulerId },
       {
         $set: {
+          imageUrl: req.body.imageUrl,
           lectureTheatre: req.body.lectureTheatre,
           location: req.body.location,
           capacity: req.body.capacity,
+          status: req.body.status,
           description: req.body.description,
         },
       },
@@ -82,6 +94,44 @@ export const updatescheduler = async (req, res, next) => {
     const { password, ...rest } = updatedScheduler._doc;
     res.status(200).json(rest);
   } catch (error) {
+    next(error);
+  }
+};
+
+//filter scheduler
+export const filterscheduler = async (req, res, next) => {
+  try {
+    const { location, faculty, facilities } = req.body; // Destructure faculty and department from req.body
+
+    let filter = {}; // Initialize an empty filter
+
+    // If faculty or department is provided, include it/them in the filter
+    if (location) {
+      filter.location = location;
+    }
+    if (faculty) {
+      filter.faculty = faculty;
+    }
+    if (facilities) {
+      filter.facilities = facilities;
+    }
+
+    const filteredSchedulers = await Admin.find({
+      $or: [
+        { location: filter.location }, // Match faculty if provided
+        { faculty: filter.faculty }, // Match department if provided
+        { facilities: filter.facilities }, // Match department if provided
+      ],
+    });
+
+    if (filteredSchedulers.length === 0) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    res.status(200).json(filteredSchedulers);
+  } catch (error) {
+    // Log the error for debugging purposes
+    console.error(error);
     next(error);
   }
 };

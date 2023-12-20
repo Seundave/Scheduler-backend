@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const schedulerSchema = mongoose.Schema(
   {
     imageUrl: {
-      type: String,
+      type: Array,
       required: true,
     },
     lectureTheatre: {
@@ -22,6 +22,10 @@ const schedulerSchema = mongoose.Schema(
     facilities: {
       type: Array,
       required: [true, "facilities field is required"],
+    },
+    status: {
+      type: String,
+      required: true,
     },
     description: {
       type: String,

@@ -85,7 +85,9 @@ export const deleteadmin = async (req, res, next) => {
 
 //update admin
 export const updateadmin = async (req, res, next) => {
+  console.log(req);
   const adminId = req.params.id;
+
   try {
     const updatedAdmin = await Admin.findOneAndUpdate(
       { _id: adminId },
@@ -105,10 +107,84 @@ export const updateadmin = async (req, res, next) => {
     if (!updatedAdmin) {
       res.status(404).json({ message: "Admin not found" });
     }
-    console.log(updatedAdmin);
+
     const { password, ...rest } = updatedAdmin._doc;
     res.status(200).json(rest);
   } catch (error) {
+    console.log(error);
     next(error);
   }
 };
+
+//get-admins
+
+// export const getadmins = async (req, res, next) => {
+//   const { faculty, department } = req.query;
+//   try {
+//     let admins;
+//     if (faculty) {
+//       admins = await Admin.find({ faculty });
+//     } else if (department) {
+//       admins = await Admin.find({ department });
+//     } else {
+//       admins = await Admin.find();
+//     }
+//     res.json({ admins });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
+//filter admin
+// export const filteradmin = async (req, res, next) => {
+//   try {
+//     const { faculty, department } = req.body;
+//     const filteredAdmins = await Admin.find({
+//       faculty,
+//       department,
+//     });
+//     if (filteredAdmins.length === 0) {
+//       return res.status(404).json({ message: "Admin not found" });
+//     }
+//     res.status(200).json(filteredAdmins);
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
+
+//filter admin
+export const filteradmin = async (req, res, next) => {
+  try {
+    const { faculty, department } = req.body; // Destructure faculty and department from req.body
+
+    console.log(req.body)
+    let filter = {}; // Initialize an empty filter
+
+    // If faculty or department is provided, include it/them in the filter
+    if (faculty) {
+      filter.faculty = faculty;
+    }
+    if (department) {
+      filter.department = department;
+    }
+
+    const filteredAdmins = await Admin.find({
+      $or: [
+        { faculty: filter.faculty }, // Match faculty if provided
+        { department: filter.department }, // Match department if provided
+      ],
+    });
+
+    if (filteredAdmins.length === 0) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    res.status(200).json(filteredAdmins);
+  } catch (error) {
+    // Log the error for debugging purposes
+    console.error(error);
+    next(error);
+  }
+};
+

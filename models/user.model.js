@@ -28,7 +28,6 @@ const AdminSchema = mongoose.Schema(
     resource: {
       type: String,
       required: true,
-      // unique:true
     },
   },
   { timestamps: true }
