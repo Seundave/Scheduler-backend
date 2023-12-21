@@ -116,7 +116,7 @@ export const filterscheduler = async (req, res, next) => {
       filter.facilities = facilities;
     }
 
-    const filteredSchedulers = await Admin.find({
+    const filteredSchedulers = await Scheduler.find({
       $or: [
         { location: filter.location }, // Match faculty if provided
         { faculty: filter.faculty }, // Match department if provided
@@ -125,7 +125,7 @@ export const filterscheduler = async (req, res, next) => {
     });
 
     if (filteredSchedulers.length === 0) {
-      return res.status(404).json({ message: "Admin not found" });
+      return res.status(404).json({ message: "Scheduler not found" });
     }
 
     res.status(200).json(filteredSchedulers);
@@ -135,3 +135,42 @@ export const filterscheduler = async (req, res, next) => {
     next(error);
   }
 };
+
+//filter history
+export const filterhistory = async (req, res, next) => {
+  try {
+    const { lectureTheatre, capacity, status } = req.body; 
+
+    console.log(req.body)
+    let filter = {}; // Initialize an empty filter
+
+    if (lectureTheatre) {
+      filter.lectureTheatre = lectureTheatre;
+    }
+    if (capacity) {
+      filter.capacity = capacity;
+    }
+    if (status) {
+      filter.status = status;
+    }
+
+    const filteredHistory = await Scheduler.find({
+      $or: [
+        { lectureTheatre: filter.lectureTheatre }, 
+        { capacity: filter.capacity }, 
+        { status: filter.status }, 
+      ],
+    });
+
+    if (filteredHistory.length === 0) {
+      return res.status(404).json({ message: "Scheduler not found" });
+    }
+
+    res.status(200).json(filteredHistory);
+  } catch (error) {
+    // Log the error for debugging purposes
+    console.error(error);
+    next(error);
+  }
+};
+

@@ -1,41 +1,57 @@
 import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
-import Admin from "../models/user.model.js";
+import schedulerUser from "../models/user.model.js";
 
-//create an admin
-export const createadmin = async (req, res, next) => {
-  const { name, faculty, department, email, password, resource } = req.body;
+//create an user
+export const createSchedulerUser = async (req, res, next) => {
+  const { name, faculty, department, email, password, pfNumber, role } =
+    req.body;
 
   const hashedPassword = await bcryptjs.hashSync(password, 10);
-  const newAdmin = new Admin({
+  const newSchedulerUser = new schedulerUser({
     name,
     faculty,
     department,
     email,
     password: hashedPassword,
-    resource,
+    pfNumber,
+    role,
   });
 
   try {
-    await newAdmin.save();
-    res.status(201).json(newAdmin); // Return a JSON object for consistency
+    await newSchedulerUser.save();
+    res.status(201).json(newSchedulerUser); // Return a JSON object for consistency
   } catch (error) {
     next(error);
   }
 };
 
-// sign in admin
-export const signinadmin = async (req, res, next) => {
-  const { email, password } = req.body;
+// sign in user
+export const signinSchedulerUser = async (req, res, next) => {
+  const { email, pfNumber, password } = req.body;
   try {
-    const validUser = await Admin.findOne({ email });
-    console.log(validUser);
-    if (!validUser) return next(errorHandler(404, "User not found"));
+    let validUser;
+
+    // Check if the user provided an email or PF number
+    if (email) {
+      validUser = await schedulerUser.findOne({ email });
+    } else if (pfNumber) {
+      validUser = await schedulerUser.findOne({ pfNumber });
+    }
+
+    if (!validUser) {
+      return next(errorHandler(404, "User not found"));
+    }
+
     const validPassword = bcryptjs.compareSync(password, validUser.password);
-    if (!validPassword) return next(errorHandler(401, "Wrong credentials"));
+    if (!validPassword) {
+      return next(errorHandler(401, "Wrong credentials"));
+    }
+
     const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
     const { password: pass, ...rest } = validUser._doc; //To remove the password from showing inside the data
+
     res
       .cookie("access_token", token, { httpOnly: true })
       .status(200)
@@ -45,146 +61,75 @@ export const signinadmin = async (req, res, next) => {
   }
 };
 
-//get all admins
-export const getalladmins = async (req, res, next) => {
+//get all users
+export const getAllUsers = async (req, res, next) => {
   try {
-    const allAdmins = await Admin.find({}, "-password");
-    res.status(200).json(allAdmins);
+    const allUsers = await schedulerUser.find({}, "-password");
+    res.status(200).json(allUsers);
   } catch (error) {
     next(error);
   }
 };
 
-//get an admin
-export const getadmin = async (req, res, next) => {
-  const adminId = req.params.id;
+//get a user
+
+export const getUser = async (req, res, next) => {
+  const userId = req.params.id;
   try {
-    const admin = await Admin.findById(adminId, "-password"); //Exclude the password
-    if (!admin) {
-      return res.status(404).json({ message: "Admin not found" });
+    const user = await schedulerUser.findById(userId, "-password"); //Exclude the password
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
-    res.status(200).json(admin);
+    res.status(200).json(user);
   } catch (error) {
     next(error);
   }
 };
 
-//delete an admin
-export const deleteadmin = async (req, res, next) => {
-  const adminId = req.params.id;
-  try {
-    const deletedAdmin = await Admin.findByIdAndDelete(adminId);
-    if (!deletedAdmin) {
-      return res.status(404).json({ message: "Admin not found" });
+//delete a user
+export const deleteUser = async (req, res, next) => {
+    const userId = req.params.id;
+    try {
+      const deletedUser = await schedulerUser.findByIdAndDelete(userId);
+      if (!deletedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      res.status(200).json({ message: "User deleted successfully" });
+    } catch (error) {
+      next(error);
     }
-    res.status(200).json({ message: "Admin deleted successfully" });
-  } catch (error) {
-    next(error);
-  }
-};
+  };
 
-//update admin
-export const updateadmin = async (req, res, next) => {
-  console.log(req);
-  const adminId = req.params.id;
-
-  try {
-    const updatedAdmin = await Admin.findOneAndUpdate(
-      { _id: adminId },
-      {
-        $set: {
-          name: req.body.name,
-          faculty: req.body.faculty,
-          department: req.body.department,
-          resource: req.body.resource,
-          password: req.body.password,
-          email: req.body.email,
+  //update admin
+export const updateUser = async (req, res, next) => {
+    console.log(req);
+    const userId = req.params.id;
+  
+    try {
+      const updatedUser = await schedulerUser.findOneAndUpdate(
+        { _id: userId },
+        {
+          $set: {
+            name: req.body.name,
+            faculty: req.body.faculty,
+            department: req.body.department,
+            pfNumber: req.body.pfNumber,
+            password: req.body.password,
+            email: req.body.email,
+            role:req.body.role,
+          },
         },
-      },
-      { new: true }
-    );
-
-    if (!updatedAdmin) {
-      res.status(404).json({ message: "Admin not found" });
+        { new: true }
+      );
+  
+      if (!updatedUser) {
+        res.status(404).json({ message: "User not found" });
+      }
+  
+      const { password, ...rest } = updatedUser._doc;
+      res.status(200).json(rest);
+    } catch (error) {
+      console.log(error);
+      next(error);
     }
-
-    const { password, ...rest } = updatedAdmin._doc;
-    res.status(200).json(rest);
-  } catch (error) {
-    console.log(error);
-    next(error);
-  }
-};
-
-//get-admins
-
-// export const getadmins = async (req, res, next) => {
-//   const { faculty, department } = req.query;
-//   try {
-//     let admins;
-//     if (faculty) {
-//       admins = await Admin.find({ faculty });
-//     } else if (department) {
-//       admins = await Admin.find({ department });
-//     } else {
-//       admins = await Admin.find();
-//     }
-//     res.json({ admins });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-
-//filter admin
-// export const filteradmin = async (req, res, next) => {
-//   try {
-//     const { faculty, department } = req.body;
-//     const filteredAdmins = await Admin.find({
-//       faculty,
-//       department,
-//     });
-//     if (filteredAdmins.length === 0) {
-//       return res.status(404).json({ message: "Admin not found" });
-//     }
-//     res.status(200).json(filteredAdmins);
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-
-
-//filter admin
-export const filteradmin = async (req, res, next) => {
-  try {
-    const { faculty, department } = req.body; // Destructure faculty and department from req.body
-
-    console.log(req.body)
-    let filter = {}; // Initialize an empty filter
-
-    // If faculty or department is provided, include it/them in the filter
-    if (faculty) {
-      filter.faculty = faculty;
-    }
-    if (department) {
-      filter.department = department;
-    }
-
-    const filteredAdmins = await Admin.find({
-      $or: [
-        { faculty: filter.faculty }, // Match faculty if provided
-        { department: filter.department }, // Match department if provided
-      ],
-    });
-
-    if (filteredAdmins.length === 0) {
-      return res.status(404).json({ message: "Admin not found" });
-    }
-
-    res.status(200).json(filteredAdmins);
-  } catch (error) {
-    // Log the error for debugging purposes
-    console.error(error);
-    next(error);
-  }
-};
-
+  };

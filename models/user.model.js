@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const AdminSchema = mongoose.Schema(
+const UserSchema = mongoose.Schema(
   {
     name: {
       type: String,
@@ -21,18 +21,23 @@ const AdminSchema = mongoose.Schema(
       required: true,
       // unique:true
     },
+    pfNumber: {
+        type: String,
+        required: true,
+        // unique:true
+      },
     password: {
       type: String,
       required: true,
     },
-    resource: {
-      type: String,
-      required: true,
-    },
+    role:{
+        type:String,
+        default:"user"
+    }
   },
   { timestamps: true }
 );
 
-const Admin = mongoose.model("Admin", AdminSchema);
+const schedulerUser = mongoose.model("schedulerUser", UserSchema);
 
-export default Admin;
+export default schedulerUser;

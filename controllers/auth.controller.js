@@ -5,13 +5,14 @@ import jwt from "jsonwebtoken";
 
 //Sign-up api route
 export const signup = async (req, res, next) => {
-  const { email, password, department, governmentsector } = req.body;
+  const { email, password, department, governmentsector, role } = req.body;
   const hashedPassword = bcryptjs.hashSync(password, 10);
   const newUser = new User({
     email,
     password: hashedPassword,
     department,
     governmentsector,
+    role
   });
 
   try {
@@ -36,6 +37,17 @@ export const signin = async (req, res, next) => {
       .cookie("access_token", token, { httpOnly: true })
       .status(200)
       .json(rest);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//get-all-superadmins
+
+export const getsuperadmins = async (req, res, next) => {
+  try {
+    const allSuperAdmins = await User.find({}, "-password");
+    res.status(200).json(allSuperAdmins);
   } catch (error) {
     next(error);
   }

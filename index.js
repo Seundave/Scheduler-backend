@@ -3,9 +3,10 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors"
 import cookieParser from "cookie-parser";
-import userRouter from "./routes/user.route.js";
+import adminRouter from "./routes/admin-route.js";
 import authRouter from "./routes/auth.route.js";
 import schedulerRouter from "./routes/scheduler.route.js";
+import userRouter from "./routes/user-route.js";
 import { errorHandler } from "./utils/error.js";
 dotenv.config();
 
@@ -34,9 +35,10 @@ app.use(
   })
 );
 
-app.use("/admin", userRouter);
+app.use("/admin", adminRouter);
 app.use("/auth", authRouter);
 app.use("/scheduler", schedulerRouter);
+app.use("/user", userRouter);
 
 // Middleware to handle errors
 app.use((err, req, res, next) => {
