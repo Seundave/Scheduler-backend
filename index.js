@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import adminRouter from "./routes/admin-route.js";
 import authRouter from "./routes/auth.route.js";
 import schedulerRouter from "./routes/scheduler.route.js";
+import scheduleRouter from "./routes/scheduleListing-route.js";
 import userRouter from "./routes/user-route.js";
 import { errorHandler } from "./utils/error.js";
 dotenv.config();
@@ -39,6 +40,7 @@ app.use("/admin", adminRouter);
 app.use("/auth", authRouter);
 app.use("/scheduler", schedulerRouter);
 app.use("/user", userRouter);
+app.use("/schedule", scheduleRouter);
 
 // Middleware to handle errors
 app.use((err, req, res, next) => {
