@@ -13,19 +13,25 @@ const scheduleSchema = new mongoose.Schema(
     selectedDate: {
       type: String,
       required: true,
+      unique:true,
     },
     selectedTime: {
-      type: Number,
+      type: String,
       required: true,
+      unique:true,
     },
     userRef: {
       type: String,
       required: true,
     },
+    status:{
+      type:String,
+      default:"pending"
+    }
   },
   { timestamps: true }
 );
 
-const scheduleListing = mongoose.model("scheduleListing", scheduleSchema);
+const ScheduleListing = mongoose.model("ScheduleListing", scheduleSchema);
 
-export default scheduleListing;
+export default ScheduleListing;
