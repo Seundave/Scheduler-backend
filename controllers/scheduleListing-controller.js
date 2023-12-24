@@ -93,3 +93,42 @@ export const getAllSchedulerListings = async (req, res, next) => {
     next(error);
   }
 };
+
+//filter userListing
+export const filterUserListing = async (req, res, next) => {
+  try {
+    const { lectureTheatre, date, status } = req.body; // Destructure faculty and department from req.body
+
+    console.log(req.body);
+    let filter = {}; // Initialize an empty filter
+
+    // If faculty or department is provided, include it/them in the filter
+    if (lectureTheatre) {
+      filter.lectureTheatre = lectureTheatre;
+    }
+    if (date) {
+      filter.date = date;
+    }
+    if (status) {
+      filter.status = status;
+    }
+
+    const filteredListings = await ScheduleListing.find({
+      $or: [
+        { lectureTheatre: filter.lectureTheatre }, // Match faculty if provided
+        { date: filter.date }, // Match department if provided
+        { status: filter.status }, // Match department if provided
+      ],
+    });
+
+    if (filteredListings.length === 0) {
+      return res.status(404).json({ message: "No record found" });
+    }
+
+    res.status(200).json(filteredListings);
+  } catch (error) {
+    // Log the error for debugging purposes
+    console.error(error);
+    next(error);
+  }
+};

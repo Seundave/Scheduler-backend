@@ -10,13 +10,13 @@ const scheduleSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    selectedDate: {
+    date: {
       type: String,
       required: true,
       unique:true,
     },
-    selectedTime: {
-      type: String,
+    time: {
+      type: Array,
       required: true,
       unique:true,
     },
