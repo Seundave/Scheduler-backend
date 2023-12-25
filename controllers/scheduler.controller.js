@@ -99,13 +99,50 @@ export const updatescheduler = async (req, res, next) => {
 };
 
 //filter scheduler
+// export const filterscheduler = async (req, res, next) => {
+//   try {
+//     const { location, faculty, facilities } = req.body; // Destructure faculty and department from req.body
+
+//     let filter = {}; // Initialize an empty filter
+
+//     // If faculty or department is provided, include it/them in the filter
+//     if (location) {
+//       filter.location = location;
+//     }
+//     if (faculty) {
+//       filter.faculty = faculty;
+//     }
+//     if (facilities) {
+//       filter.facilities = facilities;
+//     }
+
+//     const filteredSchedulers = await Scheduler.find({
+//       $or: [
+//         { location: filter.location }, // Match faculty if provided
+//         { faculty: filter.faculty }, // Match department if provided
+//         { facilities: filter.facilities }, // Match department if provided
+//       ],
+//     });
+
+//     if (filteredSchedulers.length === 0) {
+//       return res.status(404).json({ message: "Scheduler not found" });
+//     }
+
+//     res.status(200).json(filteredSchedulers);
+//   } catch (error) {
+//     // Log the error for debugging purposes
+//     console.error(error);
+//     next(error);
+//   }
+// };
+
 export const filterscheduler = async (req, res, next) => {
   try {
-    const { location, faculty, facilities } = req.body; // Destructure faculty and department from req.body
+    const { location, faculty, facilities } = req.body;
 
-    let filter = {}; // Initialize an empty filter
+    let filter = {};
 
-    // If faculty or department is provided, include it/them in the filter
+    // Include the filters only if they exist in the request body
     if (location) {
       filter.location = location;
     }
@@ -116,13 +153,8 @@ export const filterscheduler = async (req, res, next) => {
       filter.facilities = facilities;
     }
 
-    const filteredSchedulers = await Scheduler.find({
-      $or: [
-        { location: filter.location }, // Match faculty if provided
-        { faculty: filter.faculty }, // Match department if provided
-        { facilities: filter.facilities }, // Match department if provided
-      ],
-    });
+    // Use the constructed filter object to find matching schedulers
+    const filteredSchedulers = await Scheduler.find(filter);
 
     if (filteredSchedulers.length === 0) {
       return res.status(404).json({ message: "Scheduler not found" });
@@ -130,11 +162,11 @@ export const filterscheduler = async (req, res, next) => {
 
     res.status(200).json(filteredSchedulers);
   } catch (error) {
-    // Log the error for debugging purposes
     console.error(error);
     next(error);
   }
 };
+
 
 //filter history
 export const filterhistory = async (req, res, next) => {
