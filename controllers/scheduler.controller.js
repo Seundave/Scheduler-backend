@@ -149,8 +149,12 @@ export const filterscheduler = async (req, res, next) => {
     if (faculty) {
       filter.faculty = faculty;
     }
-    if (facilities) {
-      filter.facilities = facilities;
+    // if (facilities) {
+    //   filter.facilities = facilities;
+    // }
+
+    if (facilities && Array.isArray(facilities) && facilities.length > 0) {
+      filter.facilities = { $in: facilities };
     }
 
     // Use the constructed filter object to find matching schedulers
