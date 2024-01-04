@@ -50,6 +50,7 @@ export const signinSchedulerUser = async (req, res, next) => {
     }
 
     const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
+    // console.log(token)
     const { password: pass, ...rest } = validUser._doc; //To remove the password from showing inside the data
 
     res
@@ -130,6 +131,15 @@ export const updateUser = async (req, res, next) => {
       res.status(200).json(rest);
     } catch (error) {
       console.log(error);
+      next(error);
+    }
+  };
+
+  export const signOut = (req, res, next) => {
+    try {
+      res.clearCookie("access_token");
+      res.status(200).json("User has benn logged out!");
+    } catch (error) {
       next(error);
     }
   };

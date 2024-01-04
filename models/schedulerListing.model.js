@@ -11,14 +11,14 @@ const scheduleSchema = new mongoose.Schema(
       required: true,
     },
     date: {
-      type: String,
+      type: Date,
       required: true,
-      unique:true,
+      // unique:true,
     },
     time: {
       type: Array,
       required: true,
-      unique:true,
+      // unique:true,
     },
     userRef: {
       type: String,
