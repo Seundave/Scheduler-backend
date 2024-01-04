@@ -43,7 +43,7 @@ export const updateScheduler = async (req, res, next) => {
 //get a scheduler listing
 export const getSchedulerListing = async (req, res, next) => {
   try {
-    const schedulerListing = await ScheduleListing.findById(req.params.id);
+    const schedulerListing = await ScheduleListing.find({userRef:req.params.id});
     // console.log(schedulerListing);
     if (!schedulerListing) {
       return next(errorHandler(404, "No scheduler request!"));
